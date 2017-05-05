@@ -20,11 +20,17 @@ TitleState::TitleState(StateStack& stack, Context& context)
 	m_text.setFillColor(cpp3ds::Color::Black);
 	m_text.setString(_("Press any key to start. SELECT to exit."));
 	m_text.setPosition(std::floor(200.f - m_text.getLocalBounds().width / 2), 150.f);
+
+	m_textVersion.setCharacterSize(12);
+	m_textVersion.setFillColor(cpp3ds::Color::Black);
+	m_textVersion.setString(_("Version : %s", DRAWATTACK_VERSION));
+	m_textVersion.setPosition(std::floor(400.f - m_textVersion.getLocalBounds().width - 5), 226.f);
 }
 
 void TitleState::renderTopScreen(cpp3ds::Window& window)
 {
 	window.draw(m_textTitle);
+	window.draw(m_textVersion);
 	if (m_showText)
 		window.draw(m_text);
 }

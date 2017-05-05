@@ -10,6 +10,8 @@
 #define SERVER_LIST_HOST "http://cruels.net"
 #define SERVER_LIST_URI  "/drawattack.txt"
 
+#define SERVER_LIST_FILE "servers.txt"
+
 namespace DrawAttack {
 
 class ServerList: public cpp3ds::Drawable {

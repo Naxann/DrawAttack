@@ -7,6 +7,7 @@
 #include "States/NameSelectState.hpp"
 #include "States/LoadingState.hpp"
 #include "Notification.hpp"
+#include "Util.hpp"
 #include "States/ColorPickerState.hpp"
 
 
@@ -29,6 +30,12 @@ DrawAttack::DrawAttack()
 	m_stateStack.registerState<LoadingState>(States::Loading);
 	m_stateStack.registerState<ColorPickerState>(States::ColorPicker);
 	m_stateStack.pushState(States::Title);
+
+	std::string path = cpp3ds::FileSystem::getFilePath(DRAWATTACK_DIR);
+	if (!pathExists(path.c_str(), false)) {
+		makeDirectory(path.c_str());
+	}
+
 }
 
 DrawAttack::~DrawAttack()
@@ -66,5 +73,6 @@ void DrawAttack::renderBottomScreen(Window& window)
 	m_stateStack.renderBottomScreen(window);
 }
 
+bool DrawAttack::isCIA = false;
 
 } // namespace DrawAttack

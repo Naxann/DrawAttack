@@ -68,7 +68,7 @@ private:
 
 	std::map<std::string, PlayerData> m_players;
 
-	NetworkSoundRecorder m_recorder;
+	NetworkSoundRecorder *m_recorder;
 
 	cpp3ds::Font    m_iconFont;
 	cpp3ds::Texture m_buttonTexture;

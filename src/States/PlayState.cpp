@@ -1,5 +1,6 @@
 #include "PlayState.hpp"
 #include "../Notification.hpp"
+#include "../DrawAttack.hpp"
 #include <TweenEngine/Tween.h>
 #ifndef EMULATION
 #include <3ds.h>
@@ -13,9 +14,13 @@ PlayState::PlayState(StateStack& stack, Context& context)
 , m_mode(Mode::Spectate)
 , m_boardCopy(nullptr)
 , m_chatLogVelocity(0.f)
-, m_recorder(&context)
 , m_isRecording(false)
 {
+
+	if (DrawAttack::isCIA) {
+		m_recorder = new NetworkSoundRecorder(&context);
+	}
+
 	m_textBackgroundTexture.loadFromFile("images/button-radius.9.png");
 	m_buttonTexture.loadFromFile("images/button.9.png");
 	m_iconFont.loadFromFile("fonts/fontawesome.ttf");
@@ -31,6 +36,7 @@ PlayState::PlayState(StateStack& stack, Context& context)
 	m_iconMicrophone.setOutlineColor(cpp3ds::Color(0, 0, 0, 150));
 	m_iconMicrophone.setOutlineThickness(2.f);
 	m_iconMicrophone.setOrigin(m_iconMicrophone.getLocalBounds().width / 2.f, m_iconMicrophone.getLocalBounds().height / 2.f);
+
 
 	m_buttonClear.setTexture(&m_buttonTexture);
 	m_buttonClear.getText().setCharacterSize(20);
@@ -294,15 +300,28 @@ bool PlayState::processEvent(const cpp3ds::Event& event)
 				return false;
 			case cpp3ds::Keyboard::R:
 			case cpp3ds::Keyboard::L: {
-				bool hasHeadphones = false;
+				if (DrawAttack::isCIA) {
+
+					bool hasHeadphones = false;
 #ifdef EMULATION
-				hasHeadphones = true;
+					hasHeadphones = true;
 #else
-				DSP_GetHeadphoneStatus(&hasHeadphones);
+					DSP_GetHeadphoneStatus(&hasHeadphones);
 #endif
-				if (m_mode != Mode::Draw && hasHeadphones && m_recorder.start(cpp3ds::SampleRate_8180)) {
-					m_isRecording = true;
-					std::cout << "start recording..." << std::endl;
+					if (m_mode != Mode::Draw && hasHeadphones && m_recorder->start(cpp3ds::SampleRate_8180)) {
+						m_isRecording = true;
+						std::cout << "start recording..." << std::endl;
+					}
+					else if (m_mode == Mode::Draw) {
+						Notification::spawn(_("You can't talk when you are drawing."));
+					}
+					else if (!hasHeadphones) {
+						Notification::spawn(_("You have to plug an headphone to use the voice feature."));
+					} else {
+						Notification::spawn(_("An error occured when trying to record your voice."));
+					}
+				} else {
+					Notification::spawn(_("Voice feature is disabled in the Homebrew version."));
 				}
 				return false;
 			}
@@ -323,9 +342,11 @@ bool PlayState::processEvent(const cpp3ds::Event& event)
 				break;
 			case cpp3ds::Keyboard::R:
 			case cpp3ds::Keyboard::L:
-				std::cout << "stop recording..." << std::endl;
-				m_recorder.stop();
-				m_isRecording = false;
+				if (DrawAttack::isCIA) {
+					std::cout << "stop recording..." << std::endl;
+					m_recorder->stop();
+					m_isRecording = false;
+				}
 				return false;
 			default:
 				break;

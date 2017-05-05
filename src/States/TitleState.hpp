@@ -21,6 +21,7 @@ public:
 private:
 	cpp3ds::Text m_textTitle;
 	cpp3ds::Text m_text;
+	cpp3ds::Text m_textVersion;
 
 	bool m_showText;
 	float m_textEffectTime;

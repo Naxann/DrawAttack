@@ -1,8 +1,13 @@
 #include <cpp3ds/System/FileSystem.hpp>
 #include <TweenEngine/Tween.h>
 #include <sstream>
+#include <fstream>
+#include <cstdio>
+
 #include "ServerList.hpp"
 #include "Notification.hpp"
+#include "Util.hpp"
+#include "DrawAttack.hpp"
 
 using namespace cpp3ds;
 using namespace TweenEngine;
@@ -13,6 +18,7 @@ namespace DrawAttack {
 ServerList::ServerList()
 : m_selected(nullptr)
 {
+	/*
 	Http http(SERVER_LIST_HOST);
 	Http::Request request(SERVER_LIST_URI);
 	Http::Response response = http.sendRequest(request);
@@ -45,6 +51,50 @@ ServerList::ServerList()
 	}
 	else
 	{
+		Notification::spawn(_("Failed to fetch server list."));
+	}
+	*/
+
+	std::string localpath = cpp3ds::FileSystem::getFilePath(DRAWATTACK_DIR "/servers.txt");
+	if (!pathExists(localpath.c_str(), false)) {
+		std::string romfspath = cpp3ds::FileSystem::getFilePath("servers.txt");
+		std::ifstream romfsfile(romfspath);
+		std::ofstream localfile(localpath);
+		std::string line;
+		if (romfsfile.is_open() && localfile.is_open()) {
+			while (std::getline(romfsfile,line)) {
+				localfile << line << '\n';
+			}
+		}
+		if (!romfsfile.is_open()) {
+			Notification::spawn(_("Failed to fetch romfs file."));
+			if (localfile.is_open()) {
+				localfile.close();
+				remove(DRAWATTACK_DIR  "/servers.txt");
+			}
+		}
+
+		if (romfsfile.is_open()) romfsfile.close();
+		if (localfile.is_open()) localfile.close();
+	}
+
+	std::ifstream localfile(localpath);
+	if (localfile.is_open()) {
+		std::string line;
+		while (std::getline(localfile,line)) {
+			char ip[256];
+			int port;
+			if (sscanf(line.c_str(), "%[^:]:%d", ip, &port) == 2) {
+				addServer(ip, port);
+			} else {
+				err() << "Improper server ip format: " << line << std::endl;
+			}
+		}
+		for(auto& item: m_servers) {
+			item->move(-320.f, 0);
+			item->ping(cpp3ds::seconds(2));
+		}
+	} else {
 		Notification::spawn(_("Failed to fetch server list."));
 	}
 }

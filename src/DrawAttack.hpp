@@ -20,6 +20,7 @@ public:
 	void processEvent(cpp3ds::Event& event);
 	void renderTopScreen(cpp3ds::Window& window);
 	void renderBottomScreen(cpp3ds::Window& window);
+	static bool isCIA;
 
 private:
 	StateStack m_stateStack;
@@ -30,6 +31,7 @@ private:
 	cpp3ds::String m_data;
 	State::TransitionData m_transition;
 	cpp3ds::Color m_color;
+
 };
 
 }
