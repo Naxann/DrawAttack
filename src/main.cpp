@@ -4,9 +4,13 @@
 
 
 bool isCIAVersion() {
+#ifndef EMULATION
 	u64 id;
     APT_GetProgramID(&id);
 	return (id == 0x0004000000771800);
+#else
+	return false;
+#endif
 }
 
 int main(int argc, char** argv) {
@@ -38,6 +42,8 @@ int main(int argc, char** argv) {
 	game->run();
 
 	delete game;
+#ifndef EMULATION
 	nimsExit();
+#endif
 	return 0;
 }

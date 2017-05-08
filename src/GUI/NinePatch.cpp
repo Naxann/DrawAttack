@@ -1,3 +1,4 @@
+#include <cmath>
 #include "NinePatch.hpp"
 
 namespace gui3ds {

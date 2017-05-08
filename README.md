@@ -1,5 +1,14 @@
 # DrawAttack
 
+# portlibs required
+
+- freetype
+- libfmt
+- libpng
+- libvorbis
+- mbedtls
+- speex
+- zlib
 
 # Credits
 

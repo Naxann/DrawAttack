@@ -4,8 +4,9 @@
 #include <sys/stat.h>
 #include <string>
 
+#ifndef EMULATION
 #include <3ds.h>
-
+#endif
 namespace DrawAttack
 {
 
@@ -14,6 +15,6 @@ bool fileExists (const std::string& name);
 void makeDirectory(const char *dir, mode_t mode = 0777);
 int removeDirectory(const char *path, bool onlyIfEmpty = false);
 
-} // namespace FreeShop
+} // namespace DrawAttack
 
-#endif // FREESHOP_UTIL_HPP
+#endif // DRAWATTACK_UTIL_HPP
