@@ -40,6 +40,13 @@ if(BUILD_3DS)
 
 	FILE(GLOB_RECURSE TWEEN_ENGINE_SOURCE ${PROJECT_SOURCE_DIR}/external/tween-engine/src/*.cpp)
 endif()
+if(BUILD_EMULATOR)
+	include_directories(
+		${PROJECT_SOURCE_DIR}/external/tween-engine/include
+	)
+
+	FILE(GLOB_RECURSE TWEEN_ENGINE_SOURCE ${PROJECT_SOURCE_DIR}/external/tween-engine/src/*.cpp)
+endif()
 
 set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/main.cpp
@@ -107,11 +114,13 @@ set(CPP3DS_EMU_FLAGS "-O0")
 
 if(BUILD_3DS)
 	include_directories(${DEVKITPRO}/portlibs/armv6k/include)
-	set(CPP3DS_ARM_LIBS cpp3ds-window cpp3ds-graphics cpp3ds-audio cpp3ds-network cpp3ds-system citro3d mbedtls mbedx509 mbedcrypto ctru freetype png z vorbisenc vorbisfile vorbis ogg bz2 speex speexdsp fmt)
-	set(CPP3DS_EMU_LIBS cpp3ds-emu sfml-graphics sfml-window sfml-system sfml-network sfml-audio openal GLEW GL jpeg freetype vorbisenc vorbisfile vorbis ogg ssl crypto pthread speex speexdsp fmt)
+	link_directories(${CPP3DS}/lib)
+	set(CPP3DS_ARM_LIBS cpp3ds-window cpp3ds-graphics cpp3ds-audio cpp3ds-network cpp3ds-system citro3d mbedtls mbedx509 mbedcrypto ctru freetype png z vorbisenc vorbisidec ogg speex speexdsp fmt)
 	add_subdirectory(${CPP3DS}/cmake/template_arm build/arm)
 endif()
 
 if(BUILD_EMULATOR)
+	include_directories(${DEVKITPRO}/portlibs/armv6k/include)
+	set(CPP3DS_EMU_LIBS cpp3ds-emu sfml-graphics sfml-window sfml-system sfml-network sfml-audio openal GLEW GL jpeg freetype vorbisenc vorbisfile vorbis ogg ssl crypto pthread speex speexdsp fmt)
 	add_subdirectory(${CPP3DS}/cmake/template_emu build/emu)
 endif()

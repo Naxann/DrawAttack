@@ -1,3 +1,6 @@
 [submodule "external/tween-engine"]
 	path = external/tween-engine
 	url = https://github.com/cpp3ds/universal-tween-engine-cpp.git
+[submodule "dev"]
+	path = dev
+	url = https://github.com/Naxann/3DS-Homebrew-Dev-Dependencies.git
